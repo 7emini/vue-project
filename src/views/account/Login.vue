@@ -5,10 +5,12 @@
         <li @click="toggleMenu(item.type)" :class="{ current: data.current_menu === item.type }" v-for="item in data.tab_menu" :key="item.type">{{ item.label }}</li>
       </ul>
       <el-form :model="data.form" :rules="data.from_rules">
+        
         <el-form-item prop="username">
           <label class="form-label">用户名</label>
           <el-input v-model="data.form.username"></el-input>
         </el-form-item>
+
         <el-form-item prop="password">
           <label class="form-label">密码</label>
           <el-input type="password" v-model="data.form.password"></el-input>
@@ -21,16 +23,18 @@
 
         <el-form-item prop="code">
           <el-col :span="24"><label class="form-label">验证码</label></el-col>
-          <el-row :gutter="12">
-            <el-col :span="17">
+            <el-col :span="15">
               <el-input v-model="data.form.code"></el-input>
             </el-col>
-            <el-col :span="7"><el-button type="success" @click="handlerGetCode">获取验证码</el-button></el-col>
-          </el-row>
+            <el-col :span="8" :offset="1">
+              <el-button style="width: 100%;" type="success" @click="handlerGetCode">获取验证码</el-button>
+            </el-col>
         </el-form-item>
+
         <el-form-item>
           <el-button type="primary" class="el-button-block" @click="submit">立即创建</el-button>
         </el-form-item>
+
       </el-form>
     </div>
   </div>
@@ -124,6 +128,7 @@ function toggleMenu(type) {
   data.current_menu = type;
 }
 
+// 获取验证码
 function handlerGetCode() {
     getCode();
 }
