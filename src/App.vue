@@ -6,5 +6,4 @@
 #app {
   background-color: #fff;
 }
-
 </style>

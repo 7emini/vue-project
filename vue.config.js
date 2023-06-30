@@ -2,12 +2,17 @@ const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   transpileDependencies: true,
   css: {
+    // 是否使用css分离插件 ExtractTextPlugin
+    extract: true,
+    // 开启 CSS source maps?
+    sourceMap: false,
     loaderOptions: {
       scss: {
         // 注册全局CSS
         additionalData: `@import "./src/styles/main.scss";`,
       },
     },
+    // requireModuleExtension: true,
   },
   configureWebpack: {
     // element-plus 按需引入样式

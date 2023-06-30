@@ -42,6 +42,7 @@
 </template>
 
 <script setup>
+
 import { computed, reactive, getCurrentInstance, onBeforeUnmount } from "vue";
 import { validate_email, validate_password, validate_code } from "../../utils/validate";
 import { getCode } from "@/apis/common";
@@ -295,6 +296,7 @@ function reset() {
 }
 
 onBeforeUnmount(() => {
+  console.log("unmount");
   clearInterval(data.code_btn_timer);
 });
 </script>
