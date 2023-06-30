@@ -102,7 +102,7 @@ const routes = [
         path: "/test2",
         component: () => import("../views/test/Test2.vue"),
         meta: {
-          title: "测试1",
+          title: "测试2",
         },
       },
     ],
