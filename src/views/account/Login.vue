@@ -4,8 +4,8 @@
       <ul class="menu-tab">
         <li @click="toggleMenu(item.type)" :class="{ current: data.current_menu === item.type }" v-for="item in data.tab_menu" :key="item.type">{{ item.label }}</li>
       </ul>
+
       <el-form :model="data.form" :rules="data.from_rules">
-        
         <el-form-item prop="username">
           <label class="form-label">用户名</label>
           <el-input v-model="data.form.username"></el-input>
@@ -22,47 +22,62 @@
         </el-form-item>
 
         <el-form-item prop="code">
-          <el-col :span="24"><label class="form-label">验证码</label></el-col>
-            <el-col :span="15">
-              <el-input v-model="data.form.code"></el-input>
-            </el-col>
-            <el-col :span="8" :offset="1">
-              <el-button style="width: 100%;" type="success" @click="handlerGetCode">获取验证码</el-button>
-            </el-col>
+          <el-col :span="24">
+            <label class="form-label">验证码</label>
+          </el-col>
+          <el-col :span="15">
+            <el-input v-model="data.form.code"></el-input>
+          </el-col>
+          <el-col :span="8" :offset="1">
+            <el-button style="width: 100%" type="success" @click="handlerGetCode" :disabled="data.code_btn_disabled" :loading="data.code_btn_loading">{{ data.code_btn_text }}</el-button>
+          </el-col>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" class="el-button-block" @click="submit">立即创建</el-button>
+          <el-button type="primary" class="el-button-block" @click="submit">{{ data.submit_btn_text }}</el-button>
         </el-form-item>
-
       </el-form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive} from "vue";
+import { computed, reactive, getCurrentInstance, onBeforeUnmount } from "vue";
 import { validate_email, validate_password, validate_code } from "../../utils/validate";
-import { getCode } from "@/apis/common"
+import { getCode } from "@/apis/common";
+
+const { proxy } = getCurrentInstance();
 
 const data = reactive({
   tab_menu: [
     { type: "login", label: "登陆" },
     { type: "register", label: "注册" },
   ],
+
   current_menu: "login",
+
   form: {
     username: "",
     password: "",
     passwords: "",
     code: "",
   },
+
   from_rules: {
     username: [{ validator: validate_name_rules, trigger: "change" }],
     password: [{ validator: validate_password_rules, trigger: "change" }],
     passwords: [{ validator: validate_passwords_rules, trigger: "change" }],
     code: [{ validator: validate_code_rules, trigger: "change" }],
   },
+
+  submit_btn_text: computed(() => {
+    return data.current_menu === "login" ? "登陆" : "注册";
+  }),
+
+  code_btn_disabled: false,
+  code_btn_loading: false,
+  code_btn_text: "获取验证码",
+  code_btn_timer: null,
 });
 
 // 用户名验证
@@ -130,13 +145,99 @@ function toggleMenu(type) {
 
 // 获取验证码
 function handlerGetCode() {
-    getCode();
+  
+
+  const username = data.form.username;
+  const password = data.form.password;
+  const passwords = data.form.passwords;
+  if (!validate_email(username)) {
+    proxy.$message({
+      message: "用户名格式不正确",
+      type: "error",
+    });
+    return false;
+  }
+
+  if (!validate_password(password)) {
+    proxy.$message({
+      message: "密码格式不正确",
+      type: "error",
+    });
+    return false;
+  }
+
+  if (data.current_menu === "register" && password !== passwords) {
+    proxy.$message({
+      message: "两次密码不一致",
+      type: "error",
+    });
+    return false;
+  }
+
+  const requestData = {
+    username,
+    module: "register",
+  };
+
+  data.code_btn_loading = true;
+  data.code_btn_text = "发送中";
+
+  getCode(requestData)
+    .then((response) => {
+  
+      console.log(response);
+      if (response.resCode === 1024) {
+        proxy.$message.error(response.message);
+        return false;
+      }
+
+      proxy.$message.success(response.message);
+      data.form.code = response.data;
+      countdown();
+    })
+    .catch((error) => {
+      data.code_btn_loading = false;
+      data.code_btn_text = "获取验证码";
+    });
+}
+
+// 倒计时
+function countdown(time) {
+  let second = time || 30;
+  
+  // 计时器开始之前设置状态
+  data.code_btn_loading = false;
+  data.code_btn_disabled = true;
+  data.code_btn_text = `倒计时${second}秒`;
+
+  // 如果有计时器就先删除计时器
+  if (data.code_btn_timer) {
+    clearInterval(data.code_btn_timer);
+  }
+
+  data.code_btn_timer = setInterval(() => {
+    second--;
+
+    // 计时器运行时设置状态
+    data.code_btn_text = `倒计时${second}秒`;
+
+    if (second <= 0) {
+      // 计时器结束后设置状态
+      data.code_btn_text = "重新获取";
+      data.code_btn_disabled = false;
+      clearInterval(data.code_btn_timer);
+    }
+  }, 1000);
 }
 
 // 提交表单
-function submit() {
+function submit() {}
 
-}
+
+onBeforeUnmount(()=>{
+  clearInterval(data.code_btn_timer);
+});
+
 </script>
 
 <style lang="scss" scoped>
