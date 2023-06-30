@@ -5,7 +5,7 @@
         <li @click="toggleMenu(item.type)" :class="{ current: data.current_menu === item.type }" v-for="item in data.tab_menu" :key="item.type">{{ item.label }}</li>
       </ul>
 
-      <el-form :model="data.form" :rules="data.from_rules">
+      <el-form ref="account_form" :model="data.form" :rules="data.from_rules">
         <el-form-item prop="username">
           <label class="form-label">用户名</label>
           <el-input v-model="data.form.username"></el-input>
@@ -34,7 +34,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" class="el-button-block" @click="submit">{{ data.submit_btn_text }}</el-button>
+          <el-button type="primary" class="el-button-block" @click="submit" :disabled="data.submit_btn_disabled" :loading="data.submit_btn_loading">{{ data.submit_btn_text }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,6 +45,8 @@
 import { computed, reactive, getCurrentInstance, onBeforeUnmount } from "vue";
 import { validate_email, validate_password, validate_code } from "../../utils/validate";
 import { getCode } from "@/apis/common";
+import { register, login } from "@/apis/account";
+import sha1 from "js-sha1";
 
 const { proxy } = getCurrentInstance();
 
@@ -73,7 +75,8 @@ const data = reactive({
   submit_btn_text: computed(() => {
     return data.current_menu === "login" ? "登陆" : "注册";
   }),
-
+  submit_btn_disabled: true,
+  submit_btn_loading: false,
   code_btn_disabled: false,
   code_btn_loading: false,
   code_btn_text: "获取验证码",
@@ -129,6 +132,7 @@ function validate_passwords_rules(rule, value, callback) {
 // 验证码验证
 function validate_code_rules(rule, value, callback) {
   let regCode = validate_code(value);
+  data.submit_btn_disabled = !regCode;
   if (value === "") {
     callback(new Error("请输入验证码"));
   } else if (!regCode) {
@@ -145,8 +149,6 @@ function toggleMenu(type) {
 
 // 获取验证码
 function handlerGetCode() {
-  
-
   const username = data.form.username;
   const password = data.form.password;
   const passwords = data.form.passwords;
@@ -176,7 +178,7 @@ function handlerGetCode() {
 
   const requestData = {
     username,
-    module: "register",
+    module: data.current_menu,
   };
 
   data.code_btn_loading = true;
@@ -184,8 +186,7 @@ function handlerGetCode() {
 
   getCode(requestData)
     .then((response) => {
-  
-      console.log(response);
+      data.submit_btn_disabled = false;
       if (response.resCode === 1024) {
         proxy.$message.error(response.message);
         return false;
@@ -204,7 +205,7 @@ function handlerGetCode() {
 // 倒计时
 function countdown(time) {
   let second = time || 30;
-  
+
   // 计时器开始之前设置状态
   data.code_btn_loading = false;
   data.code_btn_disabled = true;
@@ -231,13 +232,71 @@ function countdown(time) {
 }
 
 // 提交表单
-function submit() {}
+function submit() {
+  proxy.$refs.account_form.validate((valid) => {
+    if (valid) {
+      data.current_menu === "login" ? submitLogin() : submitRegister();
+    } else {
+      proxy.$message("数据校验错误");
+    }
+  });
+}
 
+// 登陆逻辑
+function submitLogin() {
+  const requestData = {
+    username: data.form.username,
+    password: sha1(data.form.password),
+    code: data.form.code,
+  };
+  data.submit_btn_loading = true;
+  login(requestData)
+    .then((response) => {
+      proxy.$message({
+        message: response.message,
+        type: "success",
+      });
+      reset();
+    })
+    .catch((error) => {
+      data.submit_btn_loading = false;
+    });
+}
 
-onBeforeUnmount(()=>{
+// 注册逻辑
+function submitRegister() {
+  const requestData = {
+    username: data.form.username,
+    password: sha1(data.form.password),
+    code: data.form.code,
+  };
+  data.submit_btn_loading = true;
+  register(requestData)
+    .then((response) => {
+      proxy.$message({
+        message: response.message,
+        type: "success",
+      });
+      reset();
+    })
+    .catch((error) => {
+      data.submit_btn_loading = false;
+    });
+}
+
+function reset() {
+  proxy.$refs.account_form.resetFields();
+  data.current_menu = "login";
+  data.code_btn_timer && clearInterval(data.code_btn_timer);
+  data.code_btn_text = "获取验证码";
+  data.code_btn_disabled = false;
+  data.submit_btn_disabled = true;
+  data.submit_btn_loading = false;
+}
+
+onBeforeUnmount(() => {
   clearInterval(data.code_btn_timer);
 });
-
 </script>
 
 <style lang="scss" scoped>
