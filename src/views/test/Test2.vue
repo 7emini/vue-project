@@ -1,14 +1,11 @@
 <template>
-<h1>{{ message }}</h1>
+  <div>
+    <el-icon :size="50" color="white"><AddLocation></AddLocation></el-icon>
+    <svg-icon></svg-icon>
+  </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { errorHttpTest } from '@/apis/common';
-const message = ref("Hello World");
-errorHttpTest().then((response)=>{
-    console.log(response);
-}).catch((errorData)=>{
-    console.log(errorData);
-})
+import { AddLocation } from '@element-plus/icons-vue';
+
 </script>

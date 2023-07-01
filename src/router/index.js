@@ -18,6 +18,7 @@ const routes = [
     name: "home",
     meta: {
       title: "控制台",
+      icon:"home",
     },
     component: () => import("../views/layout/Index.vue"),
     children: [
@@ -36,6 +37,7 @@ const routes = [
     name: "news",
     meta: {
       title: "信息管理",
+      icon: "information",
     },
     component: () => import("../views/layout/Index.vue"),
     children: [
@@ -70,6 +72,7 @@ const routes = [
     name: "user",
     meta: {
       title: "用户管理",
+      icon: "user",
     },
     component: () => import("../views/layout/Index"),
     children: [
@@ -89,6 +92,7 @@ const routes = [
     component: () => import("../views/layout/Index.vue"),
     meta: {
       title: "测试",
+      icon: "ceshi",
     },
     children: [
       {

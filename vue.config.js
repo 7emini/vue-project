@@ -1,4 +1,9 @@
 const { defineConfig } = require("@vue/cli-service");
+
+const path = require('path')
+
+const resolve = dir => path.join(__dirname, dir)
+
 module.exports = defineConfig({
   transpileDependencies: true,
   css: {
@@ -19,6 +24,24 @@ module.exports = defineConfig({
     plugins: [require("unplugin-element-plus/webpack")({})],
   },
 
+  chainWebpack: (config) => {
+    config.module
+        .rule('svg')
+        .exclude.add(resolve("src/components/svgIcon/icons"))
+        .end();
+    config.module
+        .rule('icons')
+        .test(/\.svg$/)
+        .include.add(resolve('src/components/svgIcon/icons'))
+        .end()
+        .use('svg-sprite-loader')
+        .loader('svg-sprite-loader')
+        .options({
+            symbolId: 'icon-[name]',
+        })
+        .end()
+  },
+
   devServer: {
     open: false, // 编译完成是否打开网页
     host: "0.0.0.0", // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
@@ -35,4 +58,5 @@ module.exports = defineConfig({
       },
     },
   },
+  
 });
