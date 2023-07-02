@@ -11,8 +11,6 @@ const props = defineProps({
   className: String,
 });
 
-console.log(props);
-
 const svgClassName = ref(props.className);
 
 const svgIcon = computed(()=>{
