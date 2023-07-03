@@ -11,6 +11,7 @@
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.7",
+    "js-cookie": "^3.0.5",
     "js-sha1": "^0.6.0",
     "svg4everybody": "^2.1.9",
     "vue": "^3.2.13",

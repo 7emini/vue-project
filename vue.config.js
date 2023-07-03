@@ -1,8 +1,8 @@
 const { defineConfig } = require("@vue/cli-service");
 
-const path = require('path')
+const path = require("path");
 
-const resolve = dir => path.join(__dirname, dir)
+const resolve = (dir) => path.join(__dirname, dir);
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -22,24 +22,31 @@ module.exports = defineConfig({
   configureWebpack: {
     // element-plus 按需引入样式
     plugins: [require("unplugin-element-plus/webpack")({})],
+    resolve: {
+      extensions: ['.js', '.json', '.vue'],
+      alias: {
+        '@':path.resolve(__dirname, '/src'),
+        '@u':path.resolve(__dirname, '/src/utils'),
+        '@a':path.resolve(__dirname, '/src/apis'),
+        '@c':path.resolve(__dirname, '/src/components'),
+
+      }
+    }
   },
 
   chainWebpack: (config) => {
+    config.module.rule("svg").exclude.add(resolve("src/components/svgIcon/icons")).end();
     config.module
-        .rule('svg')
-        .exclude.add(resolve("src/components/svgIcon/icons"))
-        .end();
-    config.module
-        .rule('icons')
-        .test(/\.svg$/)
-        .include.add(resolve('src/components/svgIcon/icons'))
-        .end()
-        .use('svg-sprite-loader')
-        .loader('svg-sprite-loader')
-        .options({
-            symbolId: 'icon-[name]',
-        })
-        .end()
+      .rule("icons")
+      .test(/\.svg$/)
+      .include.add(resolve("src/components/svgIcon/icons"))
+      .end()
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
+      .options({
+        symbolId: "icon-[name]",
+      })
+      .end();
   },
 
   devServer: {
@@ -58,5 +65,4 @@ module.exports = defineConfig({
       },
     },
   },
-  
 });

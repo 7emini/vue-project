@@ -42,12 +42,13 @@
 </template>
 
 <script setup>
-
 import { computed, reactive, getCurrentInstance, onBeforeUnmount } from "vue";
 import { validate_email, validate_password, validate_code } from "../../utils/validate";
 import { getCode } from "@/apis/common";
 import { register, login } from "@/apis/account";
 import sha1 from "js-sha1";
+import store from "@/store";
+import router from "@/router";
 
 const { proxy } = getCurrentInstance();
 
@@ -251,12 +252,28 @@ function submitLogin() {
     code: data.form.code,
   };
   data.submit_btn_loading = true;
-  login(requestData)
+  // login(requestData)
+  //   .then((response) => {
+  //     proxy.$message({
+  //       message: response.message,
+  //       type: "success",
+  //     });
+  //     store.commit("app/SET_TOKEN", response.data.token);
+  //     store.commit("app/SET_USERNAME", response.data.username);
+  //     router.push({ path: "/console" });
+  //     reset();
+  //   })
+  //   .catch((error) => {
+  //     data.submit_btn_loading = false;
+  //   });
+  store
+    .dispatch("app/loginAction", requestData)
     .then((response) => {
       proxy.$message({
         message: response.message,
         type: "success",
       });
+      router.push({ path: "/console" });
       reset();
     })
     .catch((error) => {
@@ -296,7 +313,6 @@ function reset() {
 }
 
 onBeforeUnmount(() => {
-  console.log("unmount");
   clearInterval(data.code_btn_timer);
 });
 </script>

@@ -10,10 +10,10 @@
     <div class="wrap">
       <div class="user-info">
         <div class="face-info">
-          <img :src="user_img_path" alt="" />
-          <span class="name">Gemini</span>
+          <img :src="user_img_path" :alt="username" />
+          <span class="name">{{ username }}</span>
         </div>
-        <span class="logout">
+        <span class="logout" @click="handlerLogout">
           <svg-icon iconName="logout" className="icon-logout"></svg-icon>
         </span>
       </div>
@@ -22,17 +22,51 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, getCurrentInstance } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+
+const { proxy } = getCurrentInstance();
+
+const { replace } = useRouter();
 
 const store = useStore();
 
 const user_img_path = require("@/assets/images/logo-min.png");
 
+const username = ref(store.state.app.username);
+
 function switchAside() {
-    store.commit("app/SET_COLLAPSE")
+  store.commit("app/SET_COLLAPSE");
 }
 
+function handlerLogout() {
+
+  proxy
+    .$confirm("确定退出后台管理？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+    .then(() => {
+      store
+        .dispatch("app/logoutAction")
+        .then((response) => {
+          proxy.$message({
+            message: response.message,
+            type: "success",
+          });
+          replace({
+            name: "login",
+          });
+        })
+        .catch((error) => {
+        });
+    })
+    .catch((error) => {
+
+    });
+}
 </script>
 
 <style lang="scss" scoped>
