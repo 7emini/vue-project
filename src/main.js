@@ -18,3 +18,24 @@ app.use(router);
 app.use(ElementUi);
 app.component("svg-icon", SvgIcon);
 app.mount("#app");
+
+
+// element-plus的el-table组件ResizeObserver loop limit exceeded错误 https://juejin.cn/post/7234703748403839036
+const debounce = (fn, delay) => {
+    let timer = null;
+    return function () {
+    let context = this;
+    let args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+        fn.apply(context, args);
+      }, delay);
+    }
+}
+const _ResizeObserver = window.ResizeObserver;
+window.ResizeObserver = class ResizeObserver extends _ResizeObserver{
+    constructor(callback) {
+        callback = debounce(callback, 16);
+        super(callback);
+    }
+}
