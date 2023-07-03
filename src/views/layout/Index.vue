@@ -37,9 +37,9 @@ const aside_width = computed(() => {
   position: relative;
   z-index: 0;
   background-color: $color_white;
-  @include webkit(box-shadow, 0 0 10px 0 rgba(0, 0, 0, 0.5));
+  @include webkit(box-shadow, 0 0 10px 0 rgba(0, 0, 0, 0.1));
 }
 #layout-main {
-  background-color: #bc77a1;
+  background-color: #f7f7f7;
 }
 </style>
