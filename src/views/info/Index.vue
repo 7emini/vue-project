@@ -24,20 +24,22 @@
         </el-form>
       </el-col>
       <el-col :span="6">
-        <el-button type="danger" class="pull-right">新增</el-button>
+        <router-link to="/news-detailed" class="pull-right">
+          <el-button type="danger" class="pull-right">新增</el-button>
+        </router-link>
       </el-col>
     </el-row>
 
     <!--表格-->
     <el-row>
-      <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection="handlerSelectionChange">
+      <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection="handlerSelectionChange" height="900">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="name" label="标题" width="500"></el-table-column>
         <el-table-column prop="address" label="类别"></el-table-column>
-        <el-table-column prop="date" label="日期"></el-table-column>
+        <el-table-column prop="date" label="日期" width="200"></el-table-column>
         <el-table-column lablel="操作" width="200">
           <template #default="scope">
-            <el-button type="danger" size="small">编辑</el-button>
+            <el-button type="danger" size="small" @click="handlerDetailed">编辑</el-button>
             <el-button size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -46,32 +48,21 @@
 
     <!--分页-->
     <el-row class="margin-top-30">
-        <el-col :span="6">
-            <el-button>批量删除</el-button>
-        </el-col>
-        <el-col :span="18">
-            <el-pagination
-            class="pull-right"
-            size="small"
-            background
-            @size-change="handlerSizeChange"
-            @current-change="handlerCurrentChange"
-            :current-page = "data.current_page"
-            :page-size = "10"
-            :page-sizes = "[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="100"
-            >
-
-            </el-pagination>
-        </el-col>
+      <el-col :span="6">
+        <el-button>批量删除</el-button>
+      </el-col>
+      <el-col :span="18">
+        <el-pagination class="pull-right" size="small" background @size-change="handlerSizeChange" @current-change="handlerCurrentChange" :current-page="data.current_page" :page-size="10" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" :total="100"> </el-pagination>
+      </el-col>
     </el-row>
-
   </div>
 </template>
 
 <script setup>
 import { reactive } from "vue";
+import { useRouter } from "vue-router";
+
+const { push } = useRouter();
 
 const data = reactive({
   category: 0,
@@ -91,16 +82,22 @@ const data = reactive({
       date: "2020-06-05 00:00",
     },
   ],
-  currentPage:1,
+  currentPage: 1,
 });
+
+function handlerDetailed() {
+  push({
+    path: "/news-detailed",
+  });
+}
 
 function handlerSelectionChange(val) {
   console.log(val);
   return { data, handlerSelectionChange };
 }
 
-function handlerSizeChange(val){}
-function handlerCurrentChange(val){}
+function handlerSizeChange(val) {}
+function handlerCurrentChange(val) {}
 </script>
 
 <style lang="scss" scoped>
