@@ -6,14 +6,14 @@
       <!--树形控件-->
       <el-col :span="7">
         <div class="category-list">
-          <el-tree ref="category_tree" :data="data.tree_data" :props="data.defaultProps" @node-click="handlerNodeClick" default-expand-all :expand-on-click-node="false">
+          <el-tree ref="category_tree" :data="data.tree_data" :props="data.defaultProps" @node-click="handlerNodeClick" default-expand-all :expand-on-click-node="false" node-key="id">
             <template #default="{ node, data }">
               <div class="custom-tree-node">
                 <span> {{ node.label }}</span>
                 <span>
                   <el-button type="danger" round @click="handlerCategory('child_category_add', node)">添加子级</el-button>
                   <el-button type="success" round @click="handlerCategory(node.level === 1 ? 'parent_category_edit' : 'child_category_edit', node)">编辑</el-button>
-                  <el-button round>删除</el-button>
+                  <el-button round @click="handlerCategory('delete_category', node)">删除</el-button>
                 </span>
               </div>
             </template>
@@ -42,7 +42,7 @@
 
 <script setup>
 import { reactive, getCurrentInstance, onBeforeMount, ref } from "vue";
-import { firstCategoryAdd, getCategory, childCategoryAdd } from "@/apis/info";
+import { firstCategoryAdd, getCategory, childCategoryAdd, categoryEdit, categoryDelete } from "@/apis/info";
 
 const { proxy } = getCurrentInstance();
 
@@ -69,6 +69,7 @@ const data = reactive({
   tree_data: [],
   parent_category: "",
   parent_category_data: null,
+  sub_category_data: null,
 
   defaultProps: {
     children: "children",
@@ -85,6 +86,7 @@ const config = reactive({
     parent_disabled: true, // 是否启用父级分类输入框
     sub_disabled: true, // 是否启用子级分类输入框
     sub_show: true, // 子级分类显示/隐藏
+    clear: ["parent_category", "sub_category"],
   },
   first_category_add: {
     title: "添加一级分类", // 分类标题
@@ -107,21 +109,29 @@ const config = reactive({
     parent_disabled: false, // 是否启用父级分类输入框
     sub_disabled: true, // 是否启用子级分类输入框
     sub_show: false, // 子级分类显示/隐藏
+    create: ["parent_category"],
   },
   child_category_edit: {
     title: "编辑子级分类", // 分类标题
     parent_disabled: true, // 是否启用父级分类输入框
     sub_disabled: false, // 是否启用子级分类输入框
     sub_show: true, // 子级分类显示/隐藏
+    create: ["parent_category", "sub_category"],
   },
 });
 
-// 添加分类
+// 添加/编辑分类
 function handlerCategory(type, node_data) {
-  data.parent_category_data = node_data || null;
+  if (type === "child_category_edit") {
+    data.sub_category_data = node_data || null;
+    data.parent_category_data = node_data.parent || null;
+  } else {
+    data.parent_category_data = node_data || null;
+  }
 
-  config.type = type;
+  config.type = type === "delete_category" ? "default" : type;
   handlerInputValue();
+  type === "delete_category" && handlerDeleteConfirm();
 }
 
 // 添加分类前删除和重置输入框文本
@@ -137,6 +147,11 @@ function handlerInputValue() {
 
   if (createObject && createObject.length > 0) {
     createObject.forEach((item) => {
+      console.log(data);
+      console.log(item);
+      console.log(`${item}_data`);
+      console.log(data[`${item}_data`]);
+      console.log("-----------------");
       data[item] = data[`${item}_data`].data.category_name;
     });
   }
@@ -150,7 +165,7 @@ function handlerNodeClick() {
   };
 }
 
-// 添加节点
+// 提交 添加节点/修改节点
 function handlerSubmit() {
   if (config.type === "first_category_add") {
     handlerFirstCategoryAdd();
@@ -159,7 +174,12 @@ function handlerSubmit() {
   if (config.type === "child_category_add") {
     handlerChildCategoryAdd();
   }
+
+  if (config.type === "child_category_edit" || config.type === "parent_category_edit") {
+    handlerCategoryEidt();
+  }
 }
+
 // 添加父节点
 function handlerFirstCategoryAdd() {
   if (!data.parent_category) {
@@ -214,6 +234,99 @@ function handlerChildCategoryAdd() {
     .catch((error) => {
       data.button_loading = false;
     });
+}
+
+function handlerCategoryEidt() {
+  let textStatus = true;
+
+  if (config.type === "parent_category_edit" && !data.parent_category) {
+    textStatus = false;
+  }
+
+  if (config.type === "child_category_edit" && !data.sub_category) {
+    textStatus = false;
+  }
+
+  if (!textStatus) {
+    console.log(data.parent_category);
+    console.log(data.sub_category);
+
+    const message = config.type === "parent_category_edit" ? "父级" : "子级";
+    proxy.$message.error(`${message}名称不能为空`);
+    return false;
+  }
+
+  data.button_loading = true;
+  const node_parent = data.parent_category_data.data;
+  console.log(config.type);
+  let node_sub = null;
+  if (config.type === "child_category_edit") {
+    node_sub = data.sub_category_data.data;
+  }
+
+  const requestData = {
+    categoryName: config.type === "parent_category_edit" ? data.parent_category : data.sub_category,
+    id: config.type === "parent_category_edit" ? node_parent.id : node_sub.id,
+  };
+
+  categoryEdit(requestData)
+    .then((response) => {
+      data.button_loading = false;
+      proxy.$message({
+        message: response.message,
+        type: "success",
+      });
+      const node_data = config.type === "parent_category_edit" ? node_parent : node_sub;
+      node_data.category_name = response.data.category_name;
+    })
+    .catch((error) => {
+      data.button_loading = false;
+    });
+}
+
+
+// 确认是否
+function handlerDeleteConfirm() {
+  proxy.$confirm("确认删除该分类吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    showClose: false,
+    closeOnClickModal: false,
+    closeOnPressEscape: false,
+    type: "warning",
+    beforeClose: (action, instance, done) => {
+      if (action === "confirm") {
+        instance.confirmButtonLoading = true;
+        const requestData = {
+          categoryId: data.parent_category_data.data.id,
+        };
+        categoryDelete(requestData)
+          .then((response) => {
+            proxy.$message({
+              message: response.message,
+              type: "success",
+            });
+            instance.confirmButtonLoading = false;
+            done();
+            console.log(category_tree);
+            console.log(data.parent_category);
+            console.log(data.sub_category);
+
+            category_tree.value.remove(data.parent_category_data);
+          })
+          .catch((error) => {
+            instance.confirmButtonLoading = false;
+            done();
+          });
+
+          
+      } else {
+        done();
+      }
+    },
+  }).catch(()=>{
+
+  });
 }
 
 // 从接口获取所有节点

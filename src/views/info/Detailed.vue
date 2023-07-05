@@ -27,6 +27,9 @@
             <el-form-item label="内容:">
                 <div ref="editor"></div>
             </el-form-item>
+            <el-form-item>
+                <el-button type="danger">确定</el-button>
+            </el-form-item>
 
         </el-form>
     </div>
