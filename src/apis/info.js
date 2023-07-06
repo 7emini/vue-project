@@ -66,3 +66,16 @@ export function categoryDelete(data = {}) {
   });
 }
 
+/**
+ * 提交创建
+ * @param {*} data 
+ * @returns 
+ */
+export function infoCreate(data={}) {
+  return instance.request({
+    method: "post",
+    url:"/news/add/",
+    data,
+  })
+}
+

@@ -1,3 +1,5 @@
+import 'default-passive-events' //控制台warn解决[Violation] Added non-passive event listener to a scroll-blocking ‘mousewheel‘ event. Consi https://blog.csdn.net/Wildness_/article/details/123190078
+
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";

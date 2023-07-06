@@ -3,10 +3,15 @@
 @import "./icon.scss";
 @import "./normalize.scss";
 
+// 解决Unable to preventDefault inside passive event listener invocation.报错问题 https://juejin.cn/post/7033214477034061860
+* {
+  touch-action: pan-y;
+}
+
 .pull-right {
-    float: right;
+  float: right;
 }
 
 .margin-top-30 {
-    margin-top: 30px;
+  margin-top: 30px;
 }

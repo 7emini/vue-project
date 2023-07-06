@@ -9,10 +9,19 @@ export function getCode(data) {
 }
 
 export function errorHttpTest(data) {
-    return instance.request({
-        method: "post",
-        url: "/error/",
-        data,
-    })
+  return instance.request({
+    method: "post",
+    url: "/error/",
+    data,
+  });
 }
+
+export function uploadFile(data = {}) {
+  return instance.request({
+    method: "post",
+    url: "/upload",
+    data,
+  });
+}
+
 
