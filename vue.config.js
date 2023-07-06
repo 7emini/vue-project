@@ -25,10 +25,10 @@ module.exports = defineConfig({
     resolve: {
       extensions: ['.js', '.json', '.vue'],
       alias: {
-        '@':path.resolve(__dirname, '/src'),
-        '@u':path.resolve(__dirname, '/src/utils'),
-        '@a':path.resolve(__dirname, '/src/apis'),
-        '@c':path.resolve(__dirname, '/src/components'),
+        '@':path.resolve(__dirname, './src'),
+        '@u':path.resolve(__dirname, './src/utils'),
+        '@a':path.resolve(__dirname, './src/apis'),
+        '@c':path.resolve(__dirname, './src/components'),
 
       }
     }

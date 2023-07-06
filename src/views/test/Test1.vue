@@ -20,4 +20,6 @@ function request() {
       console.log(errorData);
     });
 }
+console.log("Hello");
+
 </script>
