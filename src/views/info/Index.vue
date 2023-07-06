@@ -1,4 +1,4 @@
- <template>
+<template>
   <div>
     <!--搜索区-->
     <el-row>
@@ -32,15 +32,20 @@
 
     <!--表格-->
     <el-row>
-      <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection="handlerSelectionChange" height="900">
+      <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection="handlerSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="name" label="标题" width="500"></el-table-column>
-        <el-table-column prop="address" label="类别"></el-table-column>
-        <el-table-column prop="date" label="日期" width="200"></el-table-column>
-        <el-table-column lablel="操作" width="200">
+        <el-table-column prop="title" label="标题" width="500"></el-table-column>
+        <el-table-column prop="category_name" label="类别"></el-table-column>
+        <el-table-column prop="createDate" label="日期" width="200" :formatter="formatDate"></el-table-column>
+        <el-table-column prop="status" label="发布状态" width="100">
+          <template #default="scope">
+            <el-switch v-model="scope.row.status" @change="changeStatus($event, scope.row)" :loading="scope.row.loading"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200">
           <template #default="scope">
             <el-button type="danger" size="small" @click="handlerDetailed">编辑</el-button>
-            <el-button size="small">删除</el-button>
+            <el-button size="small" @click="handlerDeleteConfirm(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -52,38 +57,60 @@
         <el-button>批量删除</el-button>
       </el-col>
       <el-col :span="18">
-        <el-pagination class="pull-right" size="small" background @size-change="handlerSizeChange" @current-change="handlerCurrentChange" :current-page="data.current_page" :page-size="10" :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" :total="100"> </el-pagination>
+        <el-pagination
+          class="pull-right"
+          size="small"
+          background
+          @size-change="handlerSizeChange"
+          @current-change="handlerCurrentChange"
+          :current-page="data.current_page"
+          :page-size="request_data.pageSize"
+          :page-sizes="[1, 10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="data.total"
+        >
+        </el-pagination>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { onBeforeMount, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { getTableList, status } from "@/apis/info";
+import { getDate } from "@/utils/common";
+import { getCurrentInstance } from "vue";
+
+const { proxy } = getCurrentInstance();
 
 const { push } = useRouter();
 
 const data = reactive({
+  loading:false,
+  total: 0,
   category: 0,
   category_options: [
     { label: "人工智能", value: 0 },
     { label: "区块链", value: 1 },
   ],
-  tableData: [
-    {
-      name: "王小虎",
-      address: "上海市普陀区金沙江路1516号",
-      date: "2020-06-05 00:00",
-    },
-    {
-      name: "王小虎",
-      address: "上海市普陀区金沙江路1516号",
-      date: "2020-06-05 00:00",
-    },
-  ],
+  tableData: [],
   currentPage: 1,
 });
+
+const request_data = reactive({
+  pageNumber: 1,
+  pageSize: 1,
+});
+
+function handlerGetList() {
+  getTableList(request_data).then((response) => {
+    console.log(response);
+    let response_data = response.data;
+    data.tableData = response_data.data;
+    data.total = response_data.total;
+  });
+}
 
 function handlerDetailed() {
   push({
@@ -91,13 +118,47 @@ function handlerDetailed() {
   });
 }
 
+function formatDate(row) {
+  return getDate({ value: row.createDate * 1000 });
+}
+
 function handlerSelectionChange(val) {
   console.log(val);
   return { data, handlerSelectionChange };
 }
 
-function handlerSizeChange(val) {}
-function handlerCurrentChange(val) {}
+function handlerSizeChange(val) {
+  console.log(val);
+  request_data.pageNumber = 1;
+  request_data.pageSize = val;
+  handlerGetList();
+}
+
+function handlerCurrentChange(val) {
+  request_data.pageNumber = val;
+  handlerGetList();
+}
+
+function changeStatus(value, data) {
+  data.loading = true;
+  data.status =  !data.status;
+  status({id: data.id, status: value})
+  .then(response=>{
+    proxy.$message.success(response.message);
+    data.status = value;
+    data.loading = false;
+  }).catch(error=>{
+    data.loading = false;
+  });
+}
+
+function handlerDeleteConfirm(value) {
+  console.log(value);
+}
+
+onBeforeMount(() => {
+  handlerGetList();
+});
 </script>
 
 <style lang="scss" scoped>

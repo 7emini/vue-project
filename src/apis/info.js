@@ -55,8 +55,8 @@ export function categoryEdit(data = {}) {
 
 /**
  * 删除分类
- * @param {*} data 
- * @returns 
+ * @param {*} data
+ * @returns
  */
 export function categoryDelete(data = {}) {
   return instance.request({
@@ -68,14 +68,52 @@ export function categoryDelete(data = {}) {
 
 /**
  * 提交创建
+ * @param {*} data
+ * @returns
+ */
+export function infoCreate(data = {}) {
+  return instance.request({
+    method: "post",
+    url: "/news/add/",
+    data,
+  });
+}
+
+/**
+ * 获取列表数据
  * @param {*} data 
  * @returns 
  */
-export function infoCreate(data={}) {
+export function getTableList(data = {}) {
   return instance.request({
     method: "post",
-    url:"/news/add/",
+    url: "/news/getList/",
     data,
-  })
+  });
 }
 
+/**
+ * 更改列表的发布状态
+ * @param {*} data 
+ * @returns 
+ */
+export function status(data={}) {
+  return instance.request({
+    method: "post",
+    url: "/news/status/",
+    data,
+  });
+}
+
+/**
+ * 更改列表的发布状态
+ * @param {*} data 
+ * @returns 
+ */
+export function deleteData(data={}) {
+  return instance.request({
+    method: "post",
+    url: "/news/delete/",
+    data,
+  });
+}

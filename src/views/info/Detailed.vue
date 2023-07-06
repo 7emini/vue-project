@@ -68,23 +68,19 @@ import {
   ref,
   toRefs,
 } from "vue";
+
+
 import { categoryHook } from "@/hooks/infoHook";
 import { useStore } from "vuex";
 import WangEditor from "wangeditor";
 import { uploadFile } from "@/apis/common";
 import { infoCreate } from "@/apis/info";
 import { useRouter } from "vue-router";
-
 const { proxy } = getCurrentInstance();
-
 const { infoData: category_data, handlerGetCategory: getList } = categoryHook();
-
 const store = useStore();
-
 const { go } = useRouter();
-
 const editor = ref();
-
 const formDom = ref();
 
 let editor_instance = null;
