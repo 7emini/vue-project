@@ -6,7 +6,12 @@
         <el-form :inline="true" label-width="80px">
           <el-form-item label="类别">
             <el-select v-model="data.category" placeholder="请选择">
-              <el-option v-for="item in data.category_options" :key="item.value" :value="item.value" :label="item.label"></el-option>
+              <el-option
+                v-for="item in data.category_options"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              ></el-option>
             </el-select>
           </el-form-item>
 
@@ -32,14 +37,33 @@
 
     <!--表格-->
     <el-row>
-      <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection="handlerSelectionChange">
+      <el-table
+        ref="table"
+        border
+        :data="data.tableData"
+        style="width: 100%"
+        @selection-change="handlerSelectionChange"
+      >
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="title" label="标题" width="500"></el-table-column>
+        <el-table-column
+          prop="title"
+          label="标题"
+          width="500"
+        ></el-table-column>
         <el-table-column prop="category_name" label="类别"></el-table-column>
-        <el-table-column prop="createDate" label="日期" width="200" :formatter="formatDate"></el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="日期"
+          width="200"
+          :formatter="formatDate"
+        ></el-table-column>
         <el-table-column prop="status" label="发布状态" width="100">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" @change="changeStatus($event, scope.row)" :loading="scope.row.loading"></el-switch>
+            <el-switch
+              v-model="scope.row.status"
+              @change="changeStatus($event, scope.row)"
+              :loading="scope.row.loading"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
@@ -54,7 +78,7 @@
     <!--分页-->
     <el-row class="margin-top-30">
       <el-col :span="6">
-        <el-button>批量删除</el-button>
+        <el-button :disabled="!data.row_data_id" @click="handlerDeleteConfirm(data.row_data_id)">批量删除</el-button>
       </el-col>
       <el-col :span="18">
         <el-pagination
@@ -78,7 +102,7 @@
 <script setup>
 import { onBeforeMount, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { getTableList, status } from "@/apis/info";
+import { deleteData, getTableList, status } from "@/apis/info";
 import { getDate } from "@/utils/common";
 import { getCurrentInstance } from "vue";
 
@@ -87,7 +111,8 @@ const { proxy } = getCurrentInstance();
 const { push } = useRouter();
 
 const data = reactive({
-  loading:false,
+  row_data_id:"",
+  loading: false,
   total: 0,
   category: 0,
   category_options: [
@@ -124,7 +149,12 @@ function formatDate(row) {
 
 function handlerSelectionChange(val) {
   console.log(val);
-  return { data, handlerSelectionChange };
+  if (val && val.length > 0) {
+    const idItem = val.map(item=>item.id);
+    data.row_data_id = idItem.join();
+  } else {
+    data.row_data_id = "";
+  }
 }
 
 function handlerSizeChange(val) {
@@ -141,19 +171,48 @@ function handlerCurrentChange(val) {
 
 function changeStatus(value, data) {
   data.loading = true;
-  data.status =  !data.status;
-  status({id: data.id, status: value})
-  .then(response=>{
-    proxy.$message.success(response.message);
-    data.status = value;
-    data.loading = false;
-  }).catch(error=>{
-    data.loading = false;
-  });
+  data.status = !data.status;
+  status({ id: data.id, status: value })
+    .then((response) => {
+      proxy.$message.success(response.message);
+      data.status = value;
+      data.loading = false;
+    })
+    .catch((error) => {
+      data.loading = false;
+    });
 }
 
 function handlerDeleteConfirm(value) {
-  console.log(value);
+  proxy
+    .$confirm("确定删除当前数据吗？", "提示", {
+      confirmButtonText: "",
+      cancelButtonText: "",
+      showClose: false,
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      type: "warning",
+      beforeClose: (action, instance, done) => {
+        instance.confirmButtonLoading = true;
+        if (action === "confirm") {
+          deleteData({ id: value }).then((response) => {
+            proxy.$message.success(response.message);
+            instance.confirmButtonLoading = false;
+            done();
+            handlerGetList();
+          }).catch(error=> {
+            instance.confirmButtonLoading = false;
+            done();
+          });
+        } else {
+          instance.confirmButtonLoading = false;
+          done();
+        }
+      },
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 onBeforeMount(() => {
