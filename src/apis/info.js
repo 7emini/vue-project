@@ -131,6 +131,11 @@ export function getDetailed(data = {}) {
   });
 }
 
+/**
+ * 编辑信息
+ * @param {*} data 
+ * @returns 
+ */
 export function infoEdit(data = {}) {
   return instance.request({
     method: "post",

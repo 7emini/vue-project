@@ -1,18 +1,22 @@
 <template>
   <div>
     <el-form ref="formDom" label-width="150" :model="data.form" :rules="data.form_rules">
+      
       <el-form-item label="信息类别:" prop="category">
         <el-cascader v-model="data.form.category_id" :options="category_data.category_options" :props="data.cascader_props"></el-cascader>
       </el-form-item>
+
       <el-form-item label="信息标题:" prop="title">
         <el-input v-model="data.form.title"></el-input>
       </el-form-item>
+
       <el-form-item label="缩略图:" prop="image_url">
         <el-upload class="avatar-uploader" action="#" :show-file-list="false" :http-request="handlerUpload" :on-success="handlerOnSuccess" :before-upload="handlerBeforeOnUpload">
           <img v-if="data.form.image_url" :src="data.form.image_url" class="avatar" />
           <span v-else>+</span>
         </el-upload>
       </el-form-item>
+
       <el-form-item label="发布日期:" prop="create_date">
         <el-date-picker v-model="data.form.create_date" type="datetime" placeholder="请选择日期时间"></el-date-picker>
       </el-form-item>
@@ -106,7 +110,10 @@ function handlerUpload(params) {
   });
 }
 
-function handlerOnSuccess() {}
+function handlerOnSuccess(val) {
+  console.log(val);
+  console.log("上传成功");
+}
 
 function handlerSubmitForm() {
   formDom.value.validate((valid) => {
@@ -119,6 +126,9 @@ function handlerSubmitForm() {
   });
 }
 
+/**
+ * 提交添加
+ */
 function handlerAddInfo() {
   const requestData = JSON.parse(JSON.stringify(data.form));
   requestData.create_date = dayjs(requestData.create_date).format("YYYY-MM-DD HH:mm:ss");
@@ -134,6 +144,9 @@ function handlerAddInfo() {
     });
 }
 
+/**
+ * 提交编辑
+ */
 function handlerEditInfo() {
   const requestData = JSON.parse(JSON.stringify(data.form));
   requestData.create_date = dayjs(requestData.create_date).format("YYYY-MM-DD HH:mm:ss");

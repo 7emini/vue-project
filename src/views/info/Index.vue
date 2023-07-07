@@ -5,9 +5,6 @@
       <el-col :span="18">
         <el-form :inline="true" label-width="80px">
           <el-form-item label="类别">
-            <!-- <el-select v-model="data.category" placeholder="请选择">
-              <el-option v-for="item in data.category_options" :key="item.value" :value="item.value" :label="item.label"></el-option>
-            </el-select> -->
             <el-cascader v-model="request_data.category_id" :options="category_data.category_options" :props="data.cascader_props"></el-cascader>
           </el-form-item>
 
@@ -36,16 +33,25 @@
     <!--表格-->
     <el-row>
       <el-table ref="table" border :data="data.tableData" style="width: 100%" @selection-change="handlerSelectionChange">
-        <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="title" label="标题" width="500"></el-table-column>
-        <el-table-column prop="category_name" label="类别"></el-table-column>
-        <el-table-column prop="createDate" label="日期" width="200" :formatter="formatDate"></el-table-column>
-        <el-table-column prop="status" label="发布状态" width="100">
+        <el-table-column align="center" type="selection" width="40"></el-table-column>
+        <el-table-column align="center" prop="title" label="标题" width="500"></el-table-column>
+        <el-table-column align="center" prop="category_name" label="类别"></el-table-column>
+        <el-table-column align="center" prop="createDate" label="日期" width="200" :formatter="formatDate"></el-table-column>
+        <el-table-column align="center" prop="status" label="发布状态" width="100">
           <template #default="scope">
             <el-switch v-model="scope.row.status" @change="changeStatus($event, scope.row)" :loading="scope.row.loading"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+
+        <el-table-column align="center" label="测试列">
+          <template #default="scope">
+            <span>{{ scope.row.title }}</span>
+            <br>
+            <span>{{ scope.row.category_name }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column align="center"  label="操作" width="200">
           <template #default="scope">
             <el-button type="danger" size="small" @click="handlerDetailed(scope.row.id)">编辑</el-button>
             <el-button size="small" @click="handlerDeleteConfirm(scope.row.id)">删除</el-button>
@@ -139,6 +145,7 @@ function formatParams() {
   return data;
 }
 
+// 获取列表数据
 function handlerGetList() {
   const request_data = formatParams();
   console.log(request_data);
@@ -150,6 +157,7 @@ function handlerGetList() {
   });
 }
 
+// 跳转到详情页
 function handlerDetailed(id) {
   push({
     path: "/news-detailed",
@@ -157,6 +165,7 @@ function handlerDetailed(id) {
   });
 }
 
+// 设置时间展示格式
 function formatDate(row) {
   return getDate({ value: row.createDate * 1000 });
 }
