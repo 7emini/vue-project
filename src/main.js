@@ -14,10 +14,14 @@ import "@/components/svgIcon/svg";
 // svgicon
 import SvgIcon from "@/components/svgIcon/Index.vue";
 
+// 全局方法
+import Global from "@/utils/global";
+
 const app = createApp(App);
 app.use(store);
 app.use(router);
 app.use(ElementUi);
+app.use(Global);
 app.component("svg-icon", SvgIcon);
 app.mount("#app");
 

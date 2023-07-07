@@ -81,8 +81,8 @@ export function infoCreate(data = {}) {
 
 /**
  * 获取列表数据
- * @param {*} data 
- * @returns 
+ * @param {*} data
+ * @returns
  */
 export function getTableList(data = {}) {
   return instance.request({
@@ -94,10 +94,10 @@ export function getTableList(data = {}) {
 
 /**
  * 更改列表的发布状态
- * @param {*} data 
- * @returns 
+ * @param {*} data
+ * @returns
  */
-export function status(data={}) {
+export function status(data = {}) {
   return instance.request({
     method: "post",
     url: "/news/status/",
@@ -107,13 +107,34 @@ export function status(data={}) {
 
 /**
  * 更改列表的发布状态
- * @param {*} data 
- * @returns 
+ * @param {*} data
+ * @returns
  */
-export function deleteData(data={}) {
+export function deleteData(data = {}) {
   return instance.request({
     method: "post",
     url: "/news/delete/",
+    data,
+  });
+}
+
+/**
+ * 获取详情
+ * @param {*} data
+ * @returns
+ */
+export function getDetailed(data = {}) {
+  return instance.request({
+    method: "get",
+    url: "/news/detailed/",
+    params: data,
+  });
+}
+
+export function infoEdit(data = {}) {
+  return instance.request({
+    method: "post",
+    url: "news/editInfo/",
     data,
   });
 }
