@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseTable :columns="table_config.table_header" :config="table_config.config" :request="table_config.request"> </BaseTable>
+    <BaseTable @onload="handlerOnload" :columns="table_config.table_header" :config="table_config.config" :request="table_config.request"> </BaseTable>
   </div>
 </template>
 
@@ -21,13 +21,17 @@ const table_config = reactive({
     pagination: true,
   },
   request: {
-    url: "/news/getList/",
+    url: "info",
     data: {
       pageNumber: 1,
       pageSize: 10,
     },
   },
 });
+
+function handlerOnload(data) {
+  console.log(data);
+}
 </script>
 
 <style></style>

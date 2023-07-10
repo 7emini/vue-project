@@ -74,9 +74,7 @@ import { configHook } from "./configHook";
 import { requestHook } from "./requestHook";
 
 const { infoData: category_data, handlerGetCategory: getList } = categoryHook();
-
 const { proxy } = getCurrentInstance();
-
 const { push } = useRouter();
 
 const props = defineProps({
@@ -95,6 +93,8 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const emits = defineEmits(['onload'])
 
 const { config, configInit } = configHook();
 const { requestData, table_data } = requestHook();
@@ -221,8 +221,10 @@ function handlerDeleteValue(value) {
 
 onBeforeMount(() => {
   //   handlerGetList();
-  console.log(props.request);
-  requestData(props.request);
+  // console.log(props.request);
+  requestData(props.request).then(response=>{
+    emits("onload", response);
+  });
   getList();
   console.log(category_data);
 });
