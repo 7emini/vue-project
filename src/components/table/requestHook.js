@@ -39,19 +39,24 @@ export function requestHook() {
       method,
       data,
     };
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
       TableData(request_data).then((response) => {
         table_data.data = response.data.data;
         table_data.total = response.data.total;
         resolve(table_data.data);
+      }).catch(error=>{
+        reject(error);
       });
-    })
-
-    
+    });
   };
 
-  const requestData = (data = {}) => {
-    request_config = { ...request_config, ...data };
+  const requestData = (data = {}, type = "init") => {
+    if (type == "init") {
+      request_config = { ...request_config, ...data };
+    }
+    if (type == "page") {
+      request_config = { ...request_config, ...data };
+    }
     return loadData();
   };
 

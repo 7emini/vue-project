@@ -1,35 +1,5 @@
 <template>
   <div>
-    <!--搜索区-->
-    <el-row>
-      <el-col :span="18">
-        <el-form :inline="true" label-width="80px">
-          <el-form-item label="类别">
-            <el-cascader v-model="request_data.category_id" :options="category_data.category_options" :props="data.cascader_props"></el-cascader>
-          </el-form-item>
-
-          <el-form-item label="关键字">
-            <el-select placeholder="请选择" v-model="request_data.key">
-              <el-option v-for="item in data.keyword_options" :key="item.value" :value="item.value" :label="item.label"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item>
-            <el-input placeholder="请输入关键字" v-model="request_data.keyword"></el-input>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="danger" @click="handlerGetList">搜索</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="6">
-        <router-link to="/news-detailed" class="pull-right">
-          <el-button type="danger" class="pull-right">新增</el-button>
-        </router-link>
-      </el-col>
-    </el-row>
-
     <!--表格-->
     <el-row>
       <el-table ref="table" border :data="table_data.data" style="width: 100%" @selection-change="handlerSelectionChange">
@@ -44,26 +14,19 @@
         <el-button v-if="config.batch_delete" :disabled="!data.row_data_id" @click="handlerDeleteConfirm(data.row_data_id)">批量删除</el-button>
       </el-col>
       <el-col :span="18">
-        <el-pagination
-          v-if="config.pagination"
-          class="pull-right"
-          size="small"
-          background
-          @size-change="handlerSizeChange"
-          @current-change="handlerCurrentChange"
-          :current-page="data.current_page"
-          :page-size="request_data.pageSize"
-          :page-sizes="[1, 10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="table_data.total"
-        >
-        </el-pagination>
+        <Pagination
+        v-if="config.pagination"
+        @sizeChange = "getList"
+        @currentChange = "getList"
+        :total="table_data.total"
+        ></Pagination>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup>
+import Pagination from "@/components/pagination";
 import { onBeforeMount, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { deleteData, getTableList, status } from "@/apis/info";
@@ -73,7 +36,7 @@ import { categoryHook } from "@/hooks/infoHook";
 import { configHook } from "./configHook";
 import { requestHook } from "./requestHook";
 
-const { infoData: category_data, handlerGetCategory: getList } = categoryHook();
+const { infoData: category_data, handlerGetCategory: getCategoryList } = categoryHook();
 const { proxy } = getCurrentInstance();
 const { push } = useRouter();
 
@@ -99,7 +62,7 @@ const emits = defineEmits(['onload'])
 const { config, configInit } = configHook();
 const { requestData, table_data } = requestHook();
 
-configInit(props.config);
+
 
 const data = reactive({
   render_header: props.columns,
@@ -170,17 +133,17 @@ function handlerSelectionChange(val) {
   }
 }
 
-function handlerSizeChange(val) {
-  console.log(val);
-  request_data.pageNumber = 1;
-  request_data.pageSize = val;
-  handlerGetList();
-}
+// function handlerSizeChange(val) {
+//   console.log(val);
+//   request_data.pageNumber = 1;
+//   request_data.pageSize = val;
+//   handlerGetList();
+// }
 
-function handlerCurrentChange(val) {
-  request_data.pageNumber = val;
-  handlerGetList();
-}
+// function handlerCurrentChange(val) {
+//   request_data.pageNumber = val;
+//   handlerGetList();
+// }
 
 function changeStatus(value, data) {
   data.loading = true;
@@ -219,14 +182,19 @@ function handlerDeleteValue(value) {
   });
 }
 
+function getList(params, type) {
+  // console.log("dd",requestData(params, type));
+  console.log(params);
+  requestData(params, type).then(response=>{
+    emits("onload", response);
+  });
+}
+
 onBeforeMount(() => {
   //   handlerGetList();
   // console.log(props.request);
-  requestData(props.request).then(response=>{
-    emits("onload", response);
-  });
-  getList();
-  console.log(category_data);
+  configInit(props.config);
+  getList(props.request);
 });
 </script>
 
