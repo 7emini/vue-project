@@ -10,14 +10,14 @@ import { reactive } from "vue";
 
 const table_config = reactive({
   table_header: [
-    { label: "标题", prop: "title" },
-    { label: "类别", prop: "category_name" },
-    { label: "日期", prop: "createDate" },
-    { label: "发布状态", prop: "status" },
+    { label: "标题", prop: "title", type: "text"},
+    { label: "类别", prop: "category_name",  type: "text"},
+    { label: "日期", prop: "createDate",  type: "text"},
+    { label: "发布状态", prop: "status", type: "switch"},
   ],
   config: {
-    selection: false,
-    batch_delete: false,
+    selection: true,
+    batch_delete: true,
     pagination: true,
   },
   request: {
@@ -28,6 +28,8 @@ const table_config = reactive({
     },
   },
 });
+
+
 
 function handlerOnload(data) {
   console.log(data);
