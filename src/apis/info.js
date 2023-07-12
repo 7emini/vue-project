@@ -106,7 +106,7 @@ export function status(data = {}) {
 }
 
 /**
- * 更改列表的发布状态
+ * 删除数据
  * @param {*} data
  * @returns
  */

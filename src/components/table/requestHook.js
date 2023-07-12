@@ -17,10 +17,12 @@ export function requestHook() {
   const table_data = reactive({
     data: [], // 请求到的数据
     total: 0, // 数据列表数量
+    loading: false,
   });
 
   // 加载数据
   const loadData = () => {
+    table_data.loading = true;
     // 判断是否允许请求
     if (!request_config.has) {
       return false;
@@ -55,9 +57,11 @@ export function requestHook() {
         .then((response) => {
           table_data.data = response.data.data;
           table_data.total = response.data.total;
+          table_data.loading = false;
           resolve(table_data.data);
         })
         .catch((error) => {
+          table_data.loading = false;
           reject(error);
         });
     });
@@ -69,7 +73,7 @@ export function requestHook() {
     console.log(data);
     console.log(request_config.data);
     console.log(request_config);
-    
+
     // 初始化的状态
     if (type == "init") {
       request_config = { ...request_config, ...data };
@@ -80,7 +84,6 @@ export function requestHook() {
       request_config.data = { ...request_config.data, ...data };
     }
 
-    
     return loadData();
   };
 

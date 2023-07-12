@@ -2,22 +2,36 @@
   <div>
     <!--表格-->
     <el-row>
-      <el-table ref="table" border :data="table_data.data" style="width: 100%" @selection-change="handlerSelectionChange">
+      <el-table ref="table" border :data="table_data.data" style="width: 100%" @selection-change="handlerSelectionChange" v-loading="table_data.loading" element-loading-text="加载中，请稍后">
         <el-table-column v-if="config.selection" type="selection" width="40"></el-table-column>
-        
+
         <!-- <el-table-column v-for="header in data.render_header" :key="header.prop" :prop="header.prop" :label="header.label"></el-table-column> -->
 
         <template v-for="header in data.render_header" :key="header.prop">
-          <el-table-column v-if="header.type === 'switch'" :label="header.label">
+          <el-table-column v-if="header.type === 'switch'" :label="header.label" :width="header.width">
             <template #default="scope">
               <!-- <el-switch v-model="scope.row[header.prop]" :loading="scope.row.loading"></el-switch> -->
               <Switch :data="scope.row" :config="header"></Switch>
             </template>
           </el-table-column>
-          <el-table-column v-else :label="header.label" :prop="header.prop"></el-table-column>
+
+          <el-table-column v-else-if="header.type === 'function'" :label="header.label" width="header.width">
+            <template #default="scope">
+              <div v-html="header.callback && header.callback(scope.row)"></div>
+            </template>
+          </el-table-column>
+
+          <el-table-column v-else-if="header.type==='slot'" :label="header.label" :width="header.width">
+            <template #default="scope">
+              <slot :name="header.slot_name" :data="scope.row"></slot>
+            </template>
+          </el-table-column>
+
+          <el-table-column v-else :label="header.label" :prop="header.prop" :width="header.width"></el-table-column>
         </template>
       </el-table>
     </el-row>
+
 
     <!--分页-->
     <el-row class="margin-top-30">

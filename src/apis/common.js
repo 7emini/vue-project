@@ -32,4 +32,12 @@ export function TableData(params={}) {
   });
 }
 
+export function SwitchStatus(params={}) {
+  return instance.request({
+    method: params.method,
+    url:params.url,
+    data:params.data,
+  });
+}
+
 

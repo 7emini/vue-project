@@ -4,7 +4,7 @@ const routes = [
   {
     path: "/",
     name: "index",
-    redirect: "login",
+    redirect: "console",
     hidden: true,
   },
   {

@@ -5,6 +5,10 @@ const apiUrl = {
       method: "post",
     },
   },
+  info_status: {
+    url: "/news/status",
+    method: "post"
+  }
 };
 
 export default apiUrl;
