@@ -1,57 +1,76 @@
 <template>
   <div>
-    <BaseTable @onload="handlerOnload" :columns="table_config.table_header" :config="table_config.config" :request="table_config.request">
-      <template v-slot:operation="slotData">
-        <el-button type="danger" size="mini" @click="handlerDetailed(slotData.data.id)"> 编辑</el-button>
-        <el-button size="mini" @click="deleteConfirm(slotData.data.id)"> 删除</el-button>
-      </template>
-    </BaseTable>
+    <BaseForm :items="form_config.items" :fields="form_config.fields" :buttons="form_config.buttons" :hiddenItems="form_config.hiddenItems" :disabledItems="form_config.disabledItems"></BaseForm>
   </div>
 </template>
 
 <script setup>
-import BaseTable from "@/components/table";
-import { getDate } from "@/utils/common";
-import { reactive } from "vue";
+import BaseForm from "@/components/BaseForm";
+import { onBeforeMount, reactive } from "vue";
 
-const table_config = reactive({
-  table_header: [
-    { label: "标题", prop: "title", type: "text", width: "500" },
-    { label: "类别", prop: "category_name", type: "text", width: "200" },
+const form_config = reactive({
+  items:[
     {
-      label: "日期",
-      prop: "createDate",
-      type: "function",
-      callback: (row) => {
-        // alert(row.currentDate);
-        return getDate({ value: row.currentDate * 1000 });
-      },
+      label:"标题",
+      component: "input",
+      input_type: "text",
+      prop: "title",
+      rules: [],
+      maxlength:100,
+      col:12
     },
-    { label: "发布状态", prop: "status", type: "switch", width: "100", api_module: "info", api_key: "info_status", api_url: "/news/status/", key_id: "id" },
     {
-      label: "操作",
-      type: "slot",
-      slot_name: "operation",
-      width: "200",
+      label:"是否发布",
+      component:"select",
+      prop: "is_push",
+      rules: [],
+      col:24,
+      options: [
+        {
+          label:"是",
+          value:"1"
+        },
+        {
+          label:"否",
+          value:"0",
+        }
+      ]
+    },
+    {
+      label:"备忘",
+      component: "input",
+      input_type: "textarea",
+      prop: "content",
+      rules: [],
+      maxlength:100,
+      col:12
     },
   ],
-  config: {
-    selection: true,
-    batch_delete: true,
-    pagination: true,
+  fields: {
+    title:"",
+    is_push:"",
+    content:"",
   },
-  request: {
-    url: "info",
-    data: {
-      pageNumber: 1,
-      pageSize: 10,
-    },
+  buttons: [
+    {
+      type:"danger",
+      label:"提交",
+      key:"submit",
+    }, 
+    {
+      type:"primary",
+      label:"重置",
+      key:"reset",
+    }
+  ],
+  hiddenItems: {
+    title:false,
   },
+  disabledItems: {
+    title:false,
+  }
 });
 
-function handlerOnload(data) {
-  console.log(data);
-}
 </script>
 
 <style></style>
