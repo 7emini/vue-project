@@ -1,6 +1,14 @@
 <template>
   <div>
-    <BaseForm :items="form_config.items" :fields="form_config.fields" :buttons="form_config.buttons" :hiddenItems="form_config.hiddenItems" :disabledItems="form_config.disabledItems"></BaseForm>
+    <BaseForm 
+      :items="form_config.items" 
+      :fields="form_config.fields" 
+      :buttons="form_config.buttons" 
+      :hiddenItems="form_config.hiddenItems" 
+      :disabledItems="form_config.disabledItems"
+      @callback="handlerCallback"
+    >
+    </BaseForm>
   </div>
 </template>
 
@@ -139,6 +147,10 @@ const form_config = reactive({
     title: false,
   },
 });
+
+function handlerCallback() {
+  console.log("提交表单");
+}
 </script>
 
 <style></style>

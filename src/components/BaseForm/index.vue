@@ -32,6 +32,9 @@ import FormCheckbox from "@/components/FormCheckbox";
 import FormRadio from "@/components/FormRadio";
 import FormSwitch from "@/components/FormSwitch";
 
+// 表单dom对象
+const formDom = ref(null);
+
 // 所有类型和组件映射关系
 const typeMap = {
   input: FormInput,
@@ -93,6 +96,9 @@ const buttons = reactive(props.buttons);
 const hiddenItems = reactive(props.hiddenItems);
 const disabledItems = reactive(props.disabledItems);
 
+// 提交表单回调
+const emits = defineEmits(["callback"]);
+
 // 回调表单的change事件
 function componentCallback(params) {
   // 处理表单关联操作
@@ -107,20 +113,19 @@ function componentCallback(params) {
 
 // 处理按钮事件
 function handlerButtonAction(button) {
-  // 表单dom对象
-  const formDom = ref(null);
   if (button.key === "submit") {
-    console.log("submit");
-    console.log(fields);
+    formDom.value.validate((valid)=>{
+      if (valid) {
+        emits("callback")
+      }
+    })
   } else if (button.key === "reset") {
-    console.log("reset");
     formDom.value.resetFields();
-    console.log(fields);
   }
 }
 
 onBeforeMount(() => {
-  // 初始化表达规则
+  // 初始化表单规则
   const { initRules } = rulesHook();
   initRules(items);
 });
