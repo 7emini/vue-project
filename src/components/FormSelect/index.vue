@@ -22,10 +22,15 @@ const props = defineProps({
 const emits = defineEmits(["update:dataValue", "callback"]);
 
 const data = reactive(props.data);
-const dataValue = ref("");
+const dataValue = ref(props.dataValue);
 
 function handlerChange(val) {
     emits("update:dataValue", val);
+    emits("callback", {
+    type: "checkbox",
+    value: val,
+    data: data,
+  });
 }
 
 watch(()=>props.dataValue, (newValue)=> {

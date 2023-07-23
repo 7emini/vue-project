@@ -35,11 +35,11 @@ module.exports = defineConfig({
   },
 
   chainWebpack: (config) => {
-    config.module.rule("svg").exclude.add(resolve("src/components/svgIcon/icons")).end();
+    config.module.rule("svg").exclude.add(resolve("src/components/SvgIcon/icons")).end();
     config.module
       .rule("icons")
       .test(/\.svg$/)
-      .include.add(resolve("src/components/svgIcon/icons"))
+      .include.add(resolve("src/components/SvgIcon/icons"))
       .end()
       .use("svg-sprite-loader")
       .loader("svg-sprite-loader")

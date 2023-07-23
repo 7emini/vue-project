@@ -1,6 +1,6 @@
 <template>
     <svg class="svg-class" :class="svgClassName">
-        <use :xlink:href="svgIcon"></use>
+        <use :xlink:href="SvgIcon"></use>
     </svg>
 </template>
 <script setup>
@@ -13,7 +13,7 @@ const props = defineProps({
 
 const svgClassName = ref(props.className);
 
-const svgIcon = computed(()=>{
+const SvgIcon = computed(()=>{
     return `#icon-${props.iconName}`
 });
 

@@ -25,7 +25,7 @@ const emits = defineEmits(["update:dataValue", "callback"]);
 
 const data = reactive(props.data);
 
-const dataValue = ref("");
+const dataValue = ref(props.dataValue);
 
 function handlerEnter(val) {
   emits("update:dataValue", val);

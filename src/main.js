@@ -9,10 +9,10 @@ import store from "./store";
 import ElementUi from "./plugins/elementui";
 
 // 批量导入svg文件
-import "@/components/svgIcon/svg";
+import "@/components/SvgIcon/svg";
 
-// svgicon
-import SvgIcon from "@/components/svgIcon/Index.vue";
+// SvgIcon
+import SvgIcon from "@/components/SvgIcon/Index.vue";
 
 // 全局方法
 import Global from "@/utils/global";
