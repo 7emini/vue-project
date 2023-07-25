@@ -4,10 +4,16 @@ const apiUrl = {
       url: "/news/getList/",
       method: "post",
     },
+    info_status: {
+      url: "/news/status/",
+      method: "post"
+    }
   },
-  info_status: {
-    url: "/news/status",
-    method: "post"
+  cascader: {
+    category: {
+      url: "/news/getCategoryAll/",
+      method: "post",
+    }
   }
 };
 

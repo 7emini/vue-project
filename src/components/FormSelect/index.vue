@@ -36,4 +36,8 @@ function handlerChange(val) {
 watch(()=>props.dataValue, (newValue)=> {
     dataValue.value = newValue;
 });
+
+defineExpose({
+  data,
+})
 </script>

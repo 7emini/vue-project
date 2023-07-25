@@ -1,60 +1,123 @@
 <template>
   <div>
-    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-      <el-radio-button :label="false">expand</el-radio-button>
-      <el-radio-button :label="true">collapse</el-radio-button>
-    </el-radio-group>
-    <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen" @close="handleClose">
-      <el-sub-menu index="1">
-        <template #title>
-          <el-icon><location /></el-icon>
-          <span>Navigator One</span>
-        </template>
-        <el-menu-item-group>
-          <template #title><span>Group One</span></template>
-          <el-menu-item index="1-1">item one</el-menu-item>
-          <el-menu-item index="1-2">item two</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="Group Two">
-          <el-menu-item index="1-3">item three</el-menu-item>
-        </el-menu-item-group>
-        <el-sub-menu index="1-4">
-          <template #title><span>item four</span></template>
-          <el-menu-item index="1-4-1">item one</el-menu-item>
-        </el-sub-menu>
-      </el-sub-menu>
-      <el-menu-item index="2">
-        <el-icon><icon-menu /></el-icon>
-        <template #title>Navigator Two</template>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <el-icon><document /></el-icon>
-        <template #title>Navigator Three</template>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon><setting /></el-icon>
-        <template #title>Navigator Four</template>
-      </el-menu-item>
-    </el-menu>
+    <BaseTable :table_columns="table_data.columns" :table_config="table_data.config" :request_config="table_data.request">
+      <template v-slot:operation="soltData">
+        <el-button type="danger" size="small" @click="handlerDetailed(soltData.data.id)">编辑</el-button>
+      </template>
+    </BaseTable>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
+import BaseTable from "@/components/BaseTable";
+import { getDate } from "@/utils/common";
+import { provide, reactive } from "vue";
 
-const isCollapse = ref(true);
-const handleOpen = (key, keyPath) => {
-  console.log(key, keyPath);
-};
-const handleClose = (key, keyPath) => {
-  console.log(key, keyPath);
-};
+const table_data = reactive({
+  columns: [
+    { label: "ID", prop: "id", type: "text", width: "500" },
+    {
+      label: "测试",
+      props: [
+        { name: "id", class: "row-first-line" },
+        { name: "title", class: "row-second-line" },
+      ],
+      type: "lineText",
+      width: "500",
+    },
+    { label: "标题", prop: "title", type: "text", width: "500" },
+    { label: "类别", prop: "category_name", type: "text", width: "200" },
+    {
+      label: "日期",
+      prop: "createDate",
+      type: "function",
+      callback: (row) => {
+        return getDate({ value: row.currentDate * 1000 });
+      },
+    },
+    {
+      label: "发布状态",
+      prop: "status",
+      type: "switch",
+      width: "100",
+      api_module: "info",
+      api_key: "info_status",
+      key_id: "id",
+    },
+    {
+      label: "操作",
+      type: "slot",
+      slot_name: "operation",
+      delete_elem: true,
+      width: "200",
+    },
+  ],
+  config: {
+    use_selection: true,
+    use_batch_delete: true,
+    use_pagination: true,
+    use_search: true,
+  },
+  request: {
+    url: "info",
+    delete_key: "id",
+    data: {
+      pageNumber: 1,
+      pageSize: 10,
+    },
+  },
+});
+
+const searchConfig = reactive({
+  items: [
+    {
+      component: "cascader",
+      label: "类别",
+      prop: "category_id",
+      props: {
+        label: "category_name",
+        value: "id",
+      },
+      url: "category",
+      col: 8,
+    },
+    {
+      component: "select",
+      label: "发布状态",
+      prop: "status",
+      width: "100px",
+      options: [
+        { value: "1", label: "是" },
+        { value: "2", label: "否" },
+      ],
+      col: 8,
+    },
+    {
+      component: "keyword",
+      label: "关键字",
+      prop: "keyword",
+      options: [
+        { label: "ID", value: "id" },
+        { label: "标题", value: "title" },
+      ],
+      col: 8
+    },
+  ],
+  // 表单绑定的字段，可设置默认值
+  fields: {
+    category_id: "",
+    status: "",
+  },
+  buttons: {
+    use_resetButton:true,
+  }
+});
+
+provide("searchConfig", searchConfig);
+
+function handlerDetailed(id) {
+  alert(id);
+}
 </script>
 
-<style>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
-  min-height: 400px;
-}
-</style>
+<style></style>

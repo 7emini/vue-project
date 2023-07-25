@@ -3,22 +3,24 @@
 </template>
 
 <script setup>
-import { reactive, getCurrentInstance } from "vue";
+import { reactive, getCurrentInstance} from "vue";
 
-import { SwitchStatus } from "@/apis/common";
+import { CommonApi} from "@/apis/common";
 import ApiUrl from "@/apis/requestUrl";
 
 const props = defineProps({
+
   data: {
     type: Object,
-    default: () => {},
+    default: () => { },
   },
   config: {
     type: Object,
-    default: () => {},
+    default: () => { },
   },
 });
 
+// console.log(props);
 const { proxy } = getCurrentInstance();
 const config = reactive(props.config);
 const data = reactive(props.data);
@@ -34,7 +36,10 @@ function handlerSwitch(value) {
   }
   init_data.loading = true;
 
+
   const url = config.api_url || ApiUrl?.[config.api_module]?.[config.api_key]?.url;
+  console.log(config.api_module, config.api_key);
+  console.log(ApiUrl?.[config.api_module]?.[config.api_key]?.url);
   const method = config.method || ApiUrl?.[config.api_module]?.[config.api_key]?.method || "post";
 
   if (!url) {
@@ -47,18 +52,16 @@ function handlerSwitch(value) {
     url,
     method,
     data: {
-        [key_id]:data[key_id],
-        [config.prop]: !init_data.value,
+      [key_id]: data[key_id],
+      [config.prop]: !init_data.value,
     }
   }
 
-  
-
   return new Promise((resolve, reject) => {
-    SwitchStatus(request_data)
+    CommonApi(request_data)
       .then((response) => {
         proxy.$message.success(response.message);
-        data.status = value;
+        data[config.prop] = value;
         init_data.loading = false;
         resolve(response);
       })

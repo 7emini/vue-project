@@ -33,6 +33,6 @@ function handlerEnter(val) {
 
 watch(()=>props.dataValue, (newValue)=> {
   dataValue.value = newValue;
-})
+});
 
 </script>
