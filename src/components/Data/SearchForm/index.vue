@@ -1,29 +1,35 @@
 <template>
-  <el-form ref="formDom" :model="fields" :label-width="labelWidth" inline>
-    <!-- <el-row> -->
-    <template v-for="item in items" :key="item.prop">
-      <!-- <el-col :span="item.col || 24"> -->
-      <el-form-item :label="item.label" :prop="item.prop" :rules="item.rules">
-        <component :ref="componentDom" :is="currentComp(item.component)" v-model:dataValue="fields[item.prop]" :data="item" @callback="handlerComponentCallback"></component>
-      </el-form-item>
-      <!-- </el-col> -->
-    </template>
-    <!-- </el-row> -->
-    <el-form-item>
-      <el-button type="danger" @click="handlerSearch">搜索</el-button>
-      <el-button v-if="buttons.use_resetButton" @click="handlerReset">重置</el-button>
-    </el-form-item>
-  </el-form>
+  <div style="width: 100%">
+    <el-row>
+      <el-col :span="20">
+        <el-form ref="formDom" :model="fields" :label-width="labelWidth" inline>
+          <template v-for="item in items" :key="item.prop">
+            <el-form-item :label="item.label" :prop="item.prop" :rules="item.rules">
+              <component :ref="componentDom" :is="currentComp(item.component)" v-model:dataValue="fields[item.prop]" :data="item" @callback="handlerComponentCallback"></component>
+            </el-form-item>
+          </template>
+
+          <el-form-item>
+            <el-button type="danger" @click="handlerSearch">搜索</el-button>
+            <el-button @click="handlerReset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <el-col :offset="3" :span="1">
+        <el-button>添加</el-button>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script setup>
 import { inject, reactive, ref, defineExpose } from "vue";
 
 // 表单所需要的组件
-import FormInput from "@/components/FormItem/FormInput";
-import FormSelect from "@/components/FormItem/FormSelect";
-import FormCascader from "@/components/FormItem/FormCascader";
-import FormKeyword from "@/components/FormItem/FormKeyword";
+import FormInput from "@/components/Data/FormItem/FormInput";
+import FormSelect from "@/components/Data/FormItem/FormSelect";
+import FormCascader from "@/components/Data/FormItem/FormCascader";
+import FormKeyword from "@/components/Data/FormItem/FormKeyword";
 
 // 表单dom对象
 const formDom = ref(null);
@@ -34,7 +40,7 @@ const keywordDom = ref(null);
 const componentDom = (el) => {
   if (el) {
     if (el && el.data) {
-      if(el.data.component === "keyword") {
+      if (el.data.component === "keyword") {
         keywordDom.value = el;
       }
     }
@@ -82,7 +88,7 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["callbackSearch"]);
+const emits = defineEmits(["callbackSearch", "callbackReset"]);
 
 // 获取上层组件Provide数据
 const searchConfig = inject("searchConfig");
@@ -119,12 +125,11 @@ function formatRequest() {
       requestData[key] = fields[key];
     }
   }
-  console.log(requestData);
 
   if (data.key && data.value) {
     requestData[data.key] = data.value;
   }
-  console.log(requestData);
+
   return requestData;
 }
 
@@ -134,7 +139,7 @@ function formatRequest() {
 function handlerSearch() {
   const requestData = formatRequest();
   // console.log(requestData);
-  emits("callbackSearch", requestData, "search");
+  emits("callbackSearch", { searchData: requestData });
 }
 
 /**
@@ -143,7 +148,7 @@ function handlerSearch() {
 function handlerReset() {
   formDom.value.resetFields();
   keywordDom.value && keywordDom.value.handlerClear();
-  emits("callbackSearch", {}, "search");
+  emits("callbackReset");
 }
 </script>
 

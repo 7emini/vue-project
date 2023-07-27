@@ -77,8 +77,8 @@ import { reactive, ref, onBeforeMount } from "vue";
 import { requestHook } from "./requestHook";
 import { configHook } from "./configHook";
 
-import TablePagination from "@/components/TablePagination";
-import TableSwitch from "@/components/TableSwitch";
+import TablePagination from "@/components/TableItem/TablePagination";
+import TableSwitch from "@/components/TableItem/TableSwitch";
 import SearchForm from "@/components/SearchForm";
 
 const props = defineProps({

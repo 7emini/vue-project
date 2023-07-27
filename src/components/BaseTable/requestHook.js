@@ -50,6 +50,7 @@ export function requestHook() {
         return loadData();
     }
 
+    
     const loadData = ()=>{
         // 获取默认配置的url
         const url = RequestUrl[request_config.url]?.list?.url;

@@ -26,11 +26,11 @@ import { rulesHook } from "./hooks/rulesHook";
 import { relationHook } from "./hooks/relationHook";
 
 // 表单所需要的组件
-import FormInput from "@/components/FormInput";
-import FormSelect from "@/components/FormSelect";
-import FormCheckbox from "@/components/FormCheckbox";
-import FormRadio from "@/components/FormRadio";
-import FormSwitch from "@/components/FormSwitch";
+import FormInput from "@/components/FormItem/FormInput";
+import FormSelect from "@/components/FormItem/FormSelect";
+import FormCheckbox from "@/components/FormItem/FormCheckbox";
+import FormRadio from "@/components/FormItem/FormRadio";
+import FormSwitch from "@/components/FormItem/FormSwitch";
 
 // 表单dom对象
 const formDom = ref(null);

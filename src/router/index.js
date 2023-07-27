@@ -109,6 +109,13 @@ const routes = [
           title: "测试2",
         },
       },
+      {
+        path: "/test3",
+        component: () => import("../views/test/Test3.vue"),
+        meta: {
+          title: "测试3",
+        },
+      },
     ],
   },
 ];
