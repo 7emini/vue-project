@@ -37,7 +37,7 @@
           <!--插槽-->
           <el-table-column v-else-if="header.type === 'slot'" :label="header.label" :width="header.width">
             <template #default="scope">
-              <slot :name="header.slot_name" :data="scope.row"></slot>
+              <slot :name="header.slotName" :data="scope.row"></slot>
               <el-button v-if="header.delete_elem" size="small" @click="handlerDelete('delete', scope.row)">删除</el-button>
             </template>
           </el-table-column>

@@ -15,8 +15,10 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :offset="3" :span="1">
-        <el-button>添加</el-button>
+      <el-col :offset="2" :span="2">
+        <template v-for="button in buttons" :key="button.id">
+          <el-button @click="button.callback && button.callback()"> {{ button.label }} </el-button>
+        </template>
       </el-col>
     </el-row>
   </div>
@@ -88,10 +90,10 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["callbackSearch", "callbackReset"]);
+const emits = defineEmits(["callbackSearch", "callbackReset", "callbackAdd"]);
 
 // 获取上层组件Provide数据
-const searchConfig = inject("searchConfig");
+const searchConfig = inject("searchConfig") || { labelWidth: "80", fields: [], items: [], buttons: [] };
 
 const labelWidth = ref(searchConfig.labelWidth || props.labelWidth || "100px");
 const fields = reactive(searchConfig.fields || props.fields);

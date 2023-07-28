@@ -98,12 +98,6 @@ function tableCellClassName(params) {
  */
 function getTableData(params) {
   requestData(params)
-    .then((response) => {
-      console.log(responseData);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 }
 
 function resetTableData() {

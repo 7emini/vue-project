@@ -14,6 +14,12 @@ const apiUrl = {
       url: "/news/getCategoryAll/",
       method: "post",
     }
+  },
+  menu: {
+    list: {
+      url:"/menu/listsTree",
+      method:"post",
+    }
   }
 };
 

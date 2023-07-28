@@ -47,7 +47,7 @@ const table_data = reactive({
     {
       label: "操作",
       type: "slot",
-      slot_name: "operation",
+      slotName: "operation",
       delete_elem: true,
       width: "200",
     },

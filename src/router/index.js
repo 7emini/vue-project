@@ -68,23 +68,38 @@ const routes = [
     ],
   },
   {
-    path: "/user",
-    name: "user",
+    path:"/system",
     meta: {
-      title: "用户管理",
-      icon: "user",
+      title:"系统配置",
+      icon:"system",
     },
-    component: () => import("../views/layout/Index"),
+    component:()=>import("../views/layout/Index"),
     children: [
       {
-        path: "/user-index",
-        name: "user-index",
+        path: "/user",
+        name: "user",
         meta: {
           title: "用户列表",
         },
-        component: () => import("../views/user/Index.vue"),
+        component: () => import("../views/system/User.vue"),
       },
-    ],
+      {
+        path: "/role",
+        name: "role",
+        meta: {
+          title: "角色列表",
+        },
+        component: () => import("../views/system/Role.vue"),
+      },
+      {
+        path: "/menu",
+        name: "menu",
+        meta: {
+          title: "菜单列表",
+        },
+        component: () => import("../views/system/Menu.vue"),
+      },
+    ]
   },
   {
     path: "/test",
