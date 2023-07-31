@@ -5,6 +5,7 @@ const state = {
   collapse: JSON.parse(sessionStorage.getItem("collapse")) || false,
   token: "" || getToken(),
   username: "" || getUsername(),
+  table_action_request:false,
 };
 const getters = {};
 const mutations = {
@@ -20,6 +21,9 @@ const mutations = {
     state.username = value; //设置运行时用户名
     value && setUsername(value); // 当用户明存在写入缓存
   },
+  SET_TABLE_REQUEST(state) {
+    state.table_action_request = !state.table_action_request;
+  } 
 };
 const actions = {
   // 异步登录

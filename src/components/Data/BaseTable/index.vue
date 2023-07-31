@@ -6,7 +6,7 @@
     <el-table ref="table" border :data="responseData.data" style="width: 100%" v-loading="responseData.loading" element-loading-text="加载中，请稍后..." header-row-class-name="base-table-header" :cell-class-name="tableCellClassName" :row-key="tableRowKey" empty-text="暂无数据">
       <el-table-column v-if="tableConfig.use_selection" type="selection" width="40"></el-table-column>
 
-      <template v-for="header in tableColumns" :key="header.prop">
+      <template v-for="header in columns" :key="header.prop">
         <!--开关-->
         <el-table-column :align="header.align" v-if="header.type === 'switch'" :label="header.label" :width="header.width">
           <template #default="scope">
@@ -24,7 +24,7 @@
         <!--插槽-->
         <el-table-column :align="header.align" v-else-if="header.type === 'slot'" :label="header.label" :width="header.width">
           <template #default="scope">
-            <slot :name="header.slot_name" :data="scope.row"></slot>
+            <slot :name="header.slotName" :data="scope.row"></slot>
           </template>
         </el-table-column>
 
@@ -51,7 +51,8 @@
 </template>
 
 <script setup>
-import { onBeforeMount, reactive } from "vue";
+import { onBeforeMount, reactive, watch } from "vue";
+import { useStore } from "vuex";
 import { configHook } from "./configHook";
 import { requestHook } from "./requestHook";
 
@@ -68,7 +69,7 @@ const props = defineProps({
     type: Object,
     default: {},
   },
-  tableColumns: {
+  columns: {
     type: Array,
     default: [],
   },
@@ -76,7 +77,7 @@ const props = defineProps({
 
 // 父组件传递过来的数据
 const tableConfig = reactive(props.tableConfig); // 表格配置
-const tableColumns = reactive(props.tableColumns); // 表格列配置
+const columns = reactive(props.columns); // 表格列配置
 const requestConfig = reactive(props.requestConfig); // 请求配置
 
 const { responseConfig, configInit } = configHook(); // 表格配置Hook
@@ -115,6 +116,14 @@ onBeforeMount(() => {
     config: requestConfig,
   });
 });
+
+const store = useStore();
+
+watch(()=>store.state.app.table_action_request, ()=>{
+  // tableConfig.use_actionRequest && getTableData();
+  tableConfig.use_actionRequest && console.log("请求数据");
+
+})
 </script>
 
 <style lang="scss" scoped>

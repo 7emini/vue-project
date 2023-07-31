@@ -157,8 +157,8 @@ onBeforeMount(() => {
 });
 </script>
 
-<style type="scss">
-.base-table-header {
+<style type="scss" scoped>
+/* .base-table-header {
   font-size: 18px;
   height: 80px;
 }
@@ -177,5 +177,5 @@ onBeforeMount(() => {
   .row-first-line {
     background-color: blue;
   }
-}
+} */
 </style>

@@ -7,6 +7,7 @@ export function configHook() {
         use_pagination: true, // 是否使用分页
         use_batch_delete: true, // 是否使用批量删除
         use_search: true, // 是否使用搜索
+        use_actionRequest: false, //是否使用监听的方式请求数据，比如关闭了dialog后刷新表格数据
     });
 
     /**
