@@ -118,7 +118,7 @@ const hiddenItems = reactive(props.hiddenItems);
 const disabledItems = reactive(props.disabledItems);
 
 // 提交表单回调
-const emits = defineEmits(["callback"]);
+const emits = defineEmits(["callback", "reset"]);
 
 // 回调表单的change事件
 function componentCallback(params) {
@@ -151,6 +151,7 @@ function handlerButtonAction(button) {
 function handlerResetForm() {
   console.log("重置表单");
   formDom.value.resetFields();
+  emits("reset");
 }
 
 onBeforeMount(() => {

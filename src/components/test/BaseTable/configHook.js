@@ -2,10 +2,10 @@ import { reactive } from "vue";
 
 export function configHook() {
     const config = reactive({
-        use_selection: true, // 是否使用批量选择
-        use_pagination: true, // 是否使用分页
-        use_batch_delete: true, // 是否使用批量删除
-        use_search: true, // 是否使用搜索
+        useSelection: true, // 是否使用批量选择
+        usePagination: true, // 是否使用分页
+        useBatchDelete: true, // 是否使用批量删除
+        useSearch: true, // 是否使用搜索
     });
 
     /**

@@ -31,15 +31,16 @@ const init_data = reactive({
 });
 
 function handlerSwitch(value) {
-  if (!data.id) {
-    return false;
-  }
+  // console.log("switch");
+  // if (!data.id) {
+  //   return false;
+  // }
   init_data.loading = true;
 
 
   const url = config.api_url || ApiUrl?.[config.api_module]?.[config.api_key]?.url;
-  console.log(config.api_module, config.api_key);
-  console.log(ApiUrl?.[config.api_module]?.[config.api_key]?.url);
+  // console.log(config.api_module, config.api_key);
+  // console.log(ApiUrl?.[config.api_module]?.[config.api_key]?.url);
   const method = config.method || ApiUrl?.[config.api_module]?.[config.api_key]?.method || "post";
 
   if (!url) {

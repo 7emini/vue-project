@@ -1,13 +1,14 @@
 import { reactive } from "vue";
 
 export function configHook() {
-    // 表格配置
+    // 经过处理后的表格配置
     const responseConfig = reactive({
-        use_selection: true, // 是否使用批量选择
-        use_pagination: true, // 是否使用分页
-        use_batch_delete: true, // 是否使用批量删除
-        use_search: true, // 是否使用搜索
-        use_actionRequest: false, //是否使用监听的方式请求数据，比如关闭了dialog后刷新表格数据
+        useSelection: true, // 是否使用批量选择
+        usePagination: true, // 是否使用分页
+        useBatchDelete: true, // 是否使用批量删除
+        useSearch: true, // 是否使用搜索
+        useActionRequest: false, //是否使用监听的方式请求数据，比如关闭了dialog后刷新表格数据
+        isExpandAll:true, // 树形列表是否全部展开
     });
 
     /**

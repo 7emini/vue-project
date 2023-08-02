@@ -58,10 +58,10 @@ const tableColumns = reactive([
 ]);
 
 const tableConfig = reactive({
-  use_selection: false,
-  use_batch_delete: true,
-  use_pagination: true,
-  use_search: true,
+  useSelection: false,
+  useBatchDelete: true,
+  usePagination: true,
+  useSearch: true,
 });
 
 const tableRequest = reactive({

@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import BaseTable from "@/components/BaseTable";
+import BaseTable from "@/components/Data/BaseTable";
 import { getDate } from "@/utils/common";
 import { provide, reactive } from "vue";
 
@@ -53,10 +53,10 @@ const table_data = reactive({
     },
   ],
   config: {
-    use_selection: true,
-    use_batch_delete: true,
-    use_pagination: true,
-    use_search: true,
+    useSelection: true,
+    useBatchDelete: true,
+    usePagination: true,
+    useSearch: true,
   },
   request: {
     url: "info",

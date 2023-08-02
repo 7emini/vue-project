@@ -3,8 +3,8 @@
     <SearchForm @callbackSearch="getTableData" @callbackReset="resetTableData"></SearchForm>
   </el-row>
   <el-row>
-    <el-table ref="table" border :data="responseData.data" style="width: 100%" v-loading="responseData.loading" element-loading-text="加载中，请稍后..." header-row-class-name="base-table-header" :cell-class-name="tableCellClassName" :row-key="tableRowKey" empty-text="暂无数据">
-      <el-table-column v-if="tableConfig.use_selection" type="selection" width="40"></el-table-column>
+    <el-table ref="table" border :data="responseData.data" style="width: 100%" v-loading="responseData.loading" element-loading-text="加载中，请稍后..." header-row-class-name="base-table-header" :cell-class-name="tableCellClassName" :row-key="requestConfig.rowKey" :default-expand-all="responseConfig.isExpandAll" empty-text="暂无数据" @selection-change="handlerSelectionChange">
+      <el-table-column v-if="responseConfig.useSelection" type="selection" width="40"></el-table-column>
 
       <template v-for="header in columns" :key="header.prop">
         <!--开关-->
@@ -25,6 +25,7 @@
         <el-table-column :align="header.align" v-else-if="header.type === 'slot'" :label="header.label" :width="header.width">
           <template #default="scope">
             <slot :name="header.slotName" :data="scope.row"></slot>
+            <el-button v-if="header.useDelete"  type="danger" @click="handlerDelete('delete', scope.row)">删除</el-button>
           </template>
         </el-table-column>
 
@@ -43,9 +44,9 @@
     </el-table>
   </el-row>
   <el-row class="margin-top-20">
-    <el-col :span="12"></el-col>
+    <el-col :span="12"><el-button :disabled="!dataId" @click="handlerDelete('batch')">批量删除</el-button></el-col>
     <el-col :span="12">
-      <Pagination v-if="tableConfig.use_pagination" :total="responseData.total" :pageSize="requestConfig.data.pageSize" @sizeChange="getTableData" @currentChange="getTableData"></Pagination>
+      <Pagination v-if="responseConfig.usePagination" :total="responseData.total" :pageSize="requestConfig.data.pageSize" @sizeChange="getTableData" @currentChange="getTableData"></Pagination>
     </el-col>
   </el-row>
 </template>
@@ -81,12 +82,16 @@ const columns = reactive(props.columns); // 表格列配置
 const requestConfig = reactive(props.requestConfig); // 请求配置
 
 const { responseConfig, configInit } = configHook(); // 表格配置Hook
-const { responseData, requestData } = requestHook(); // 表格数据请求Hook
+const { responseData, dataId, requestData, handlerDeleteConfirm, saveDataId } = requestHook(); // 表格数据请求Hook
 
 function tableRowKey(row) {
-  return row.id;
+  return row.menu_id;
 }
 
+/**
+ * 表格cell名称
+ * @param {*} params 
+ */
 function tableCellClassName(params) {
   return "row";
 }
@@ -107,6 +112,18 @@ function resetTableData() {
   });
 }
 
+function handlerSelectionChange(val) {
+  console.log(val);
+  saveDataId(val);
+}
+
+function handlerDelete(type, val) {
+  if (type === 'delete') {
+    saveDataId(val);
+  }
+  handlerDeleteConfirm();
+}
+
 // 在组件挂载之前
 onBeforeMount(() => {
   // 1.初始化表格配置
@@ -120,8 +137,10 @@ onBeforeMount(() => {
 const store = useStore();
 
 watch(()=>store.state.app.table_action_request, ()=>{
-  // tableConfig.use_actionRequest && getTableData();
-  tableConfig.use_actionRequest && console.log("请求数据");
+  // tableConfig.useActionRequest && getTableData();
+  responseConfig.useActionRequest && getTableData({
+    config: requestConfig,
+  });
 
 })
 </script>

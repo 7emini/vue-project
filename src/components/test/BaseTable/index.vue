@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row v-if="config.use_search" >
+    <el-row v-if="config.useSearch" >
       <SearchForm @callbackSearch="getTableData"></SearchForm>
     </el-row>
     <!--数据表格-->
@@ -17,7 +17,7 @@
         @selection-change="handlerSelectionChange"
 
       >
-        <el-table-column v-if="table_config.use_selection" type="selection" width="40"></el-table-column>
+        <el-table-column v-if="table_config.useSelection" type="selection" width="40"></el-table-column>
 
         <template v-for="header in columns" :key="header.prop">
           <!--开关-->
@@ -61,12 +61,12 @@
     <el-row class="margin-top-30">
       <!--批量删除按钮-->
       <el-col :span="10">
-        <el-button :disabled="!response_table_data.data_id" size="small" @click="handlerDelete('batch')" v-if="config.use_batch_delete">批量删除</el-button>
+        <el-button :disabled="!response_table_data.data_id" size="small" @click="handlerDelete('batch')" v-if="config.useBatchDelete">批量删除</el-button>
       </el-col>
 
       <!--分页-->
       <el-col :span="14">
-        <TablePagination v-if="config.use_pagination" :total="response_table_data.total" :pageSize="props.request_config.data.pageSize" @sizeChange="getTableData" @currentChange="getTableData"></TablePagination>
+        <TablePagination v-if="config.usePagination" :total="response_table_data.total" :pageSize="props.request_config.data.pageSize" @sizeChange="getTableData" @currentChange="getTableData"></TablePagination>
       </el-col>
     </el-row>
   </div>

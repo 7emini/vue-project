@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import BaseForm from "@/components/BaseForm";
+import BaseForm from "@/components/Data/BaseForm";
 import { onBeforeMount, reactive } from "vue";
 
 const form_config = reactive({
